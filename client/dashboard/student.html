@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Assignment Management</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> Student Portal</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#assignments" class="nav-item active" data-section="assignments">
+                    <i class="fas fa-tasks"></i>
+                    Open Assignments
+                </a>
+                <a href="#submissions" class="nav-item" data-section="submissions">
+                    <i class="fas fa-upload"></i>
+                    My Submissions
+                </a>
+                <a href="#grades" class="nav-item" data-section="grades">
+                    <i class="fas fa-chart-bar"></i>
+                    My Grades
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1 id="pageTitle">Open Assignments</h1>
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </header>
+
+            <!-- Assignments Section -->
+            <section id="assignments-section" class="content-section active">
+                <div class="section-header">
+                    <h2>Available Assignments</h2>
+                    <button class="btn btn-primary" onclick="loadAssignments()">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div id="assignmentsList" class="cards-container">
+                    <div class="loading-spinner">Loading assignments...</div>
+                </div>
+            </section>
+
+            <!-- Submissions Section -->
+            <section id="submissions-section" class="content-section">
+                <div class="section-header">
+                    <h2>Submit Assignment</h2>
+                </div>
+                <form id="submissionForm" class="submission-form">
+                    <div class="form-group">
+                        <label for="assignmentSelect">Select Assignment</label>
+                        <select id="assignmentSelect" name="assignmentId" required>
+                            <option value="">Choose an assignment...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="githubLink">GitHub Repository Link</label>
+                        <input type="url" id="githubLink" name="gitHubLink" required 
+                               placeholder="https://github.com/username/repository">
+                    </div>
+                    <div class="form-group">
+                        <label for="partner">Partner ID (Optional)</label>
+                        <input type="text" id="partner" name="partner" 
+                               placeholder="Enter partner's user ID">
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-upload"></i>
+                        Submit Assignment
+                    </button>
+                </form>
+            </section>
+
+            <!-- Grades Section -->
+            <section id="grades-section" class="content-section">
+                <div class="section-header">
+                    <h2>My Grades & Class Average</h2>
+                    <button class="btn btn-primary" onclick="loadGrades()">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div id="gradesContainer">
+                    <div class="grades-grid">
+                        <div class="grades-card">
+                            <h3>My Submissions</h3>
+                            <div id="myGrades" class="grades-list">
+                                <div class="loading-spinner">Loading grades...</div>
+                            </div>
+                        </div>
+                        <div class="grades-card">
+                            <h3>Class Averages</h3>
+                            <div id="classAverages" class="grades-list">
+                                <div class="loading-spinner">Loading averages...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/student.js"></script>
+</body>
+</html>

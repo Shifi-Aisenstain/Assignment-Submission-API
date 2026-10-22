@@ -1,0 +1,92 @@
+[{
+  "_id": {
+    "$oid": "69516298438191455b325ae0"
+  },
+  "assignmentId": {
+    "$oid": "695158fb06cd26f0fe77edf3"
+  },
+  "studentId": "student123",
+  "githubLink": "https://github.com/student123/calculator",
+  "partner": "student456",
+  "__v": 0,
+  "feedback": "Excellent work! Well structured code.",
+  "grade": 95
+},
+{
+  "_id": {
+    "$oid": "69516c5589a3c58180dfab1b"
+  },
+  "assignmentId": {
+    "$oid": "695168c889a3c58180dfab18"
+  },
+  "studentId": "student123",
+  "githubLink": "https://github.com/student123/js-calculator",
+  "partner": "student456",
+  "grade": 95,
+  "feedback": "Excellent work! Clean code and good functionality."
+},
+{
+  "_id": {
+    "$oid": "69516cb789a3c58180dfab1c"
+  },
+  "assignmentId": {
+    "$oid": "6951658d1f25f308c3966a94"
+  },
+  "studentId": "student456",
+  "githubLink": "https://github.com/student456/ai-chatbot",
+  "partner": "student202",
+  "grade": 90,
+  "feedback": "Impressive AI chatbot with natural language processing."
+},
+{
+  "_id": {
+    "$oid": "69516cc589a3c58180dfab1d"
+  },
+  "assignmentId": {
+    "$oid": "6951658d1f25f308c3966a94"
+  },
+  "studentId": "student404",
+  "githubLink": "https://github.com/student404/machine-learning-model",
+  "partner": "student789",
+  "grade": 96,
+  "feedback": "Outstanding ML implementation with excellent accuracy."
+},
+{
+  "_id": {
+    "$oid": "69516cd689a3c58180dfab1e"
+  },
+  "assignmentId": {
+    "$oid": "695158b306cd26f0fe77edef"
+  },
+  "studentId": "student123",
+  "githubLink": "https://github.com/student303/flutter-social-app",
+  "partner": "student123",
+  "grade": 88,
+  "feedback": "Good functionality, needs performance optimization."
+},
+{
+  "_id": {
+    "$oid": "69516ce989a3c58180dfab1f"
+  },
+  "assignmentId": {
+    "$oid": "695158b306cd26f0fe77edef"
+  },
+  "studentId": "student202",
+  "githubLink": "https://github.com/student202/mobile-app-flutter",
+  "partner": "student123",
+  "grade": 94,
+  "feedback": "Excellent mobile app with great UX design."
+},
+{
+  "_id": {
+    "$oid": "69516cfd89a3c58180dfab20"
+  },
+  "assignmentId": {
+    "$oid": "695166c41f25f308c3966a96"
+  },
+  "studentId": "student101",
+  "githubLink": "https://github.com/student101/data-science-project",
+  "partner": "student123",
+  "grade": 86,
+  "feedback": "Good analysis, could improve documentation."
+}]

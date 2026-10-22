@@ -1,0 +1,88 @@
+[{
+  "_id": {
+    "$oid": "695158b306cd26f0fe77edef"
+  },
+  "title": "JavaScript Basics",
+  "description": "Create a simple calculator using JavaScript",
+  "dueDate": {
+    "$date": "2025-02-15T23:59:59.000Z"
+  },
+  "createdAt": {
+    "$date": "2025-12-28T16:20:03.462Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-28T16:20:03.462Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6951658d1f25f308c3966a94"
+  },
+  "title": "C++ Basics",
+  "description": "Create a simple plain using C++",
+  "dueDate": {
+    "$date": "2023-02-15T00:00:00.000Z"
+  },
+  "createdAt": {
+    "$date": "2025-12-28T17:14:53.808Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-28T17:14:53.808Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695166c41f25f308c3966a96"
+  },
+  "title": "C++ Basics",
+  "description": "Create a simple plain using C++",
+  "dueDate": {
+    "$date": "2023-02-15T00:00:00.000Z"
+  },
+  "createdAt": {
+    "$date": "2025-12-28T17:20:04.698Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-28T17:20:04.698Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6951689589a3c58180dfab15"
+  },
+  "title": "JavaScript Calculator",
+  "description": "Create a calculator using vanilla JavaScript with basic operations",
+  "dueDate": "2026-02-15T23:59:59.000Z",
+  "createdAt": "2024-12-01T10:00:00.000Z",
+  "updatedAt": "2024-12-01T10:00:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "695168a989a3c58180dfab16"
+  },
+  "title": "React Todo App",
+  "description": "Build a todo application using React with CRUD operations",
+  "dueDate": "2022-01-20T23:59:59.000Z",
+  "createdAt": "2024-11-15T10:00:00.000Z",
+  "updatedAt": "2024-11-15T10:00:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "695168bb89a3c58180dfab17"
+  },
+  "title": "Node.js API Server",
+  "description": "Create a REST API server using Node.js and Express",
+  "dueDate": "2027-12-20T23:59:59.000Z",
+  "createdAt": "2024-11-01T10:00:00.000Z",
+  "updatedAt": "2024-11-01T10:00:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "695168c889a3c58180dfab18"
+  },
+  "title": "Database Design Project",
+  "description": "Design and implement a MongoDB database schema for an e-commerce system",
+  "dueDate": "2024-12-10T23:59:59.000Z",
+  "createdAt": "2024-10-20T10:00:00.000Z",
+  "updatedAt": "2024-10-20T10:00:00.000Z"
+}]

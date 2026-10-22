@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Management System</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Assignment Management System</h1>
+                <p class="hero-subtitle">Streamline your academic workflow with our modern platform</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </button>
+                    <button class="btn btn-secondary" id="registerBtn">
+                        <i class="fas fa-user-plus"></i>
+                        Register
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeLogin">&times;</span>
+                <div class="auth-container">
+                    <h2>Welcome Back</h2>
+                    <form id="loginForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="loginUserId">User ID</label>
+                            <input type="text" id="loginUserId" name="userId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In
+                        </button>
+                    </form>
+                    <div id="loginError" class="error-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div id="registerModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeRegister">&times;</span>
+                <div class="auth-container">
+                    <h2>Create Account</h2>
+                    <form id="registerForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="registerUserId">User ID</label>
+                            <input type="text" id="registerUserId" name="_id" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerName">Full Name</label>
+                            <input type="text" id="registerName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Email</label>
+                            <input type="email" id="registerEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <input type="password" id="registerPassword" name="password" required>
+                            <small>At least 8 characters with letters and numbers</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerRole">Role</label>
+                            <select id="registerRole" name="role" required>
+                                <option value="Student">Student</option>
+                                <option value="Teacher">Teacher</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-user-plus"></i>
+                            Create Account
+                        </button>
+                    </form>
+                    <div id="registerError" class="error-message"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inline JavaScript to ensure buttons work immediately
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const loginModal = document.getElementById('loginModal');
+            const registerModal = document.getElementById('registerModal');
+            const closeLogin = document.getElementById('closeLogin');
+            const closeRegister = document.getElementById('closeRegister');
+            
+            loginBtn.addEventListener('click', function() {
+                loginModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+            
+            registerBtn.addEventListener('click', function() {
+                registerModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+            
+            closeLogin.addEventListener('click', function() {
+                loginModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            closeRegister.addEventListener('click', function() {
+                registerModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === loginModal) {
+                    loginModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+                if (event.target === registerModal) {
+                    registerModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+    </script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
