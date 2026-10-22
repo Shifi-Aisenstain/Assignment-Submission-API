@@ -1,111 +1,115 @@
-import { Assignment, IAssignment } from '../../DB_Service/Assignments/assignmentModel';
 import mongoose from 'mongoose';
+import createError from 'http-errors';
+import { Assignment } from '../Assignments/assignmentModel';
 import { ISubmission, Submission } from './SubmissionModel';
-import { logger } from '../../Utils/Logger';
 import { User } from '../Users/UserModel';
+import { logger } from '../../Utils/Logger';
 
-const populateSubmition = (query: mongoose.Query<ISubmission[], ISubmission>) => {
-    return query
+const GITHUB_URL = /^https?:\/\/(www\.)?github\.com\/[\w.-]+(\/[\w.-]+)*\/?$/i;
+
+const populated = (query: mongoose.Query<any, any>) =>
+    query
         .populate('studentId', 'name email role')
         .populate('partner', 'name email role')
-        .populate('assignmentId', 'title description dueDate')
-};
+        .populate('assignmentId', 'title description dueDate');
 
-export async function getSubmitions(): Promise<ISubmission[]> {
-    const query = Submission.find();
-    logger.info(`All submissions retrieved`);
-    return await populateSubmition(query).exec();
+export async function getSubmissions() {
+    const submissions = await populated(Submission.find()).exec();
+    logger.info(`All submissions retrieved: ${submissions.length}`);
+    return submissions;
 }
 
-export async function addGrade(
+/** Submissions of a student, including the ones where the student is listed as the partner. */
+export async function getSubmissionsByStudent(studentId: string) {
+    return await populated(Submission.find({ $or: [{ studentId }, { partner: studentId }] })).exec();
+}
+
+export async function submitAssignment(
     studentId: string,
-    assignmentsId: string,
-    grade: number,
-    feedback?: string
-): Promise<ISubmission | null> {
-    const doc = await Submission.findOne({ studentId: studentId, assignmentId: assignmentsId }).exec();
-    if (!doc)
-        return null;
-    doc.grade = grade;
-    if (feedback !== undefined)
-        doc.feedback = feedback;
-    return await doc.save();
-}
+    data: { assignmentId: string; githubLink: string; partner?: string }
+): Promise<ISubmission> {
+    const { assignmentId, githubLink, partner } = data;
 
-export async function getAvgGrads(): Promise<{ assignmentTitle: string; Average: Number | null }[]> {
-    const gradesMap = new Map<string, { sum: number; count: number }>();
-    
-    // קבל את כל ההגשות עם populate של assignmentId
-    const submissions = await Submission.find().populate('assignmentId', 'title').exec();
-    
-    // קבץ לפי שם המטלה
-    for (const submission of submissions) {
-        if (submission.assignmentId && submission.grade !== undefined) {
-            const title = (submission.assignmentId as any).title;
-            if (!gradesMap.has(title)) {
-                gradesMap.set(title, { sum: 0, count: 0 });
-            }
-            const current = gradesMap.get(title)!;
-            current.sum += submission.grade;
-            current.count++;
+    if (!mongoose.isValidObjectId(assignmentId)) {
+        throw createError(400, 'A valid assignmentId is required.');
+    }
+    if (typeof githubLink !== 'string' || !GITHUB_URL.test(githubLink)) {
+        throw createError(400, 'githubLink must be a GitHub URL, e.g. https://github.com/user/repo');
+    }
+
+    const assignment = await Assignment.findById(assignmentId).exec();
+    if (!assignment) {
+        throw createError(404, 'Assignment not found.');
+    }
+    if (assignment.dueDate <= new Date()) {
+        throw createError(400, 'The due date of this assignment has passed.');
+    }
+
+    if (partner) {
+        if (partner === studentId) {
+            throw createError(400, 'You cannot be your own partner.');
+        }
+        const partnerUser = await User.findById(partner).exec();
+        if (!partnerUser || partnerUser.role !== 'Student') {
+            throw createError(400, 'Partner must be an existing student.');
+        }
+        if (await Submission.exists({ assignmentId, studentId: partner })) {
+            throw createError(409, 'Your partner has already submitted this assignment.');
         }
     }
-    
-    // הוסף מטלות ללא ציונים
-    const assignments = await Assignment.find().exec();
-    for (const assignment of assignments) {
-        if (!gradesMap.has(assignment.title)) {
-            gradesMap.set(assignment.title, { sum: 0, count: 0 });
-        }
-    }
-    
-    // חשב ממוצעים
-    const allGrads: { assignmentTitle: string; Average: Number | null }[] = [];
-    for (const [title, data] of gradesMap) {
-        const average = data.count > 0 ? data.sum / data.count : null;
-        allGrads.push({ assignmentTitle: title, Average: average });
-    }
-    
-    logger.info(`Average grades calculated for ${allGrads.length} assignments`);
-    logger.info(`Average grades viewed`);
-    return allGrads;
-}
 
-export async function submitionsById(studentId: string): Promise<ISubmission[]> {
-    let query = Submission.find({
-        $or: [
-            { studentId: studentId },
-            { partner: studentId }
-        ]
-    });
-    return await populateSubmition(query).exec();
-}
-
-export async function submitAssigement(studentId: string, userData: {assignmentId: string, githubLink: string, partner?: string}): Promise<ISubmission> {
-    let submission;
-    
-    if(userData.partner){
-        const partner = await User.findOne({
-            _id: userData.partner
-        }).exec();
-        if(!partner){
-            throw new Error("Partner is not a student");
-        }
-        submission = new Submission({
-            studentId: studentId,
-            assignmentId: userData.assignmentId,
-            githubLink: userData.githubLink,
-            partner: userData.partner
-        });
-    } else {
-        submission = new Submission({
-            studentId: studentId,
-            assignmentId: userData.assignmentId,
-            githubLink: userData.githubLink
-        });
+    if (await Submission.exists({ assignmentId, $or: [{ studentId }, { partner: studentId }] })) {
+        throw createError(409, 'This assignment was already submitted.');
     }
-    
-    await submission.save(); 
-    logger.info(`Submission created for student ${studentId} for assignment ${userData.assignmentId}`);   
+
+    const submission = await new Submission({ assignmentId, studentId, githubLink, partner: partner || undefined }).save();
+    logger.info(`Submission created for student ${studentId}, assignment ${assignmentId}`);
     return submission;
+}
+
+export async function addGrade(studentId: string, assignmentId: string, grade: unknown, feedback?: unknown): Promise<ISubmission> {
+    if (!mongoose.isValidObjectId(assignmentId)) {
+        throw createError(400, 'A valid assignment ID is required.');
+    }
+    const score = Number(grade);
+    if (grade === undefined || grade === null || grade === '' || !Number.isFinite(score) || score < 0 || score > 100) {
+        throw createError(400, 'grade must be a number between 0 and 100.');
+    }
+
+    const submission = await Submission.findOne({ studentId, assignmentId }).exec();
+    if (!submission) {
+        throw createError(404, 'Submission not found.');
+    }
+    submission.grade = score;
+    if (typeof feedback === 'string') {
+        submission.feedback = feedback;
+    }
+    await submission.save();
+    logger.info(`Grade ${score} saved for student ${studentId}, assignment ${assignmentId}`);
+    return submission;
+}
+
+export interface AssignmentAverage {
+    assignmentId: string;
+    assignmentTitle: string;
+    Average: number | null;
+}
+
+/** Average grade of every assignment (null when nothing was graded yet). */
+export async function getAverageGrades(): Promise<AssignmentAverage[]> {
+    const [assignments, stats] = await Promise.all([
+        Assignment.find().exec(),
+        Submission.aggregate<{ _id: mongoose.Types.ObjectId; avg: number }>([
+            { $match: { grade: { $exists: true, $ne: null } } },
+            { $group: { _id: '$assignmentId', avg: { $avg: '$grade' } } }
+        ])
+    ]);
+    const averages = new Map(stats.map(s => [String(s._id), s.avg]));
+
+    logger.info(`Average grades calculated for ${assignments.length} assignments`);
+    return assignments.map(a => ({
+        assignmentId: String(a._id),
+        assignmentTitle: a.title,
+        Average: averages.get(String(a._id)) ?? null
+    }));
 }

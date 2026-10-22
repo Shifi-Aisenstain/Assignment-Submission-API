@@ -1,29 +1,28 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
 
-// ממשק עבור מסמך מטלה
 export interface IAssignment extends Document {
   title: string;
-  description: string;
+  description?: string;
   dueDate: Date;
 }
 
-// סכמה עבור מטלה
 const assignmentSchema = new Schema<IAssignment>(
   {
-    title: { type: String, required: true },
+    title: { type: String, required: true, trim: true },
     description: { type: String },
-    dueDate : { type: Date, required: true },
+    dueDate: { type: Date, required: true },
   },
   {
     timestamps: true,
     versionKey: false,
-    toJSON: {virtuals: true,},
+    toJSON: { virtuals: true },
     toObject: { virtuals: true }
   }
 );
-assignmentSchema.virtual('IsOpen').get(function() {
-  const IsOpen: boolean = this.dueDate > new Date();
-  return IsOpen;
-  
+
+// true while the due date has not passed
+assignmentSchema.virtual('isOpen').get(function () {
+  return this.dueDate > new Date();
 });
+
 export const Assignment: Model<IAssignment> = mongoose.model<IAssignment>('assignment', assignmentSchema);

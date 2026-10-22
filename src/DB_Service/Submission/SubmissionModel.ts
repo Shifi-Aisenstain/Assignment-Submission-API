@@ -1,4 +1,4 @@
-import mongoose, { Document, Double, Schema, Types } from 'mongoose';
+import mongoose, { Schema, Types } from 'mongoose';
 
 export interface ISubmission {
   assignmentId: Types.ObjectId;
@@ -11,31 +11,22 @@ export interface ISubmission {
 
 export const submissionSchema = new Schema<ISubmission>(
   {
-    assignmentId: { 
-      type: Schema.Types.ObjectId, 
-      required: true, 
-      ref: 'assignment' 
-    },
-    studentId: { 
-      type: String, 
-      required: true, 
-      ref: 'user'
-    },
+    assignmentId: { type: Schema.Types.ObjectId, required: true, ref: 'assignment' },
+    studentId: { type: String, required: true, ref: 'user' },
     githubLink: { type: String, required: true },
     partner: { type: String, ref: 'user' },
-    grade: { type: Number },
+    grade: { type: Number, min: 0, max: 100 },
     feedback: { type: String }
   },
-  { 
-    toJSON: {virtuals: true},
+  {
+    toJSON: { virtuals: true },
     toObject: { virtuals: true }
   }
 );
-submissionSchema.virtual('ThereIsGrade?').get(function() {
-    if(this.grade === undefined)
-         return false;
-    return true;
-  
+
+// true once a teacher has graded the submission
+submissionSchema.virtual('isGraded').get(function () {
+  return this.grade !== undefined && this.grade !== null;
 });
 
-export const Submission = mongoose.model('Submission', submissionSchema);
+export const Submission = mongoose.model<ISubmission>('Submission', submissionSchema);

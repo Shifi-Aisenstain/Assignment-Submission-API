@@ -1,27 +1,27 @@
-import { Assignment, IAssignment } from '../../DB_Service/Assignments/assignmentModel';
-import { AuthService } from '../../Routers/Authentication/JwtUtils';
-import mongoose from 'mongoose';    
+import createError from 'http-errors';
+import { Assignment, IAssignment } from './assignmentModel';
 import { logger } from '../../Utils/Logger';
 
-const outhService = new AuthService();
+export async function createAssignment(data: { title?: unknown; description?: unknown; dueDate?: unknown }): Promise<IAssignment> {
+  if (typeof data.title !== 'string' || !data.title.trim()) {
+    throw createError(400, 'Title is required.');
+  }
+  const dueDate = new Date(data.dueDate as string);
+  if (data.dueDate === undefined || Number.isNaN(dueDate.getTime())) {
+    throw createError(400, 'A valid dueDate is required.');
+  }
 
-export async function createAssignment(userData:
-    {
-        title: string,
-        description?: string,
-        dueDate: Date
-    }): Promise<IAssignment> {
-    const newAssignment = new Assignment(userData);
-    logger.info(`Assignment created: ${userData.title} due on ${userData.dueDate}`);
-    return await newAssignment.save();
+  const assignment = await new Assignment({
+    title: data.title,
+    description: typeof data.description === 'string' ? data.description : undefined,
+    dueDate
+  }).save();
+  logger.info(`Assignment created: ${assignment.title} due on ${assignment.dueDate.toISOString()}`);
+  return assignment;
 }
 
-export async function openAssignment(): Promise<IAssignment[]> {
-    const now = new Date();
-    const allAssignments = await Assignment.find().exec();
-    const openAssignments = allAssignments.filter(assignment => assignment.dueDate > now);
-    
-    logger.info(`Open assignments retrieved: ${openAssignments.length} found`);
-    return openAssignments;
+export async function openAssignments(): Promise<IAssignment[]> {
+  const assignments = await Assignment.find({ dueDate: { $gt: new Date() } }).sort({ dueDate: 1 }).exec();
+  logger.info(`Open assignments retrieved: ${assignments.length} found`);
+  return assignments;
 }
-    

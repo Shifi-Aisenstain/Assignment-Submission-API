@@ -1,32 +1,32 @@
-import { User, IUser } from '../../DB_Service/Users/UserModel';
-import createError from "http-errors";
-import { AuthService } from '../../Routers/Authentication/JwtUtils';
-import {logger} from '../../Utils/Logger';
 import bcrypt from 'bcrypt';
+import createError from 'http-errors';
+import { User, IUser } from './UserModel';
+import { AuthService } from '../../Routers/Authentication/JwtUtils';
+import { logger } from '../../Utils/Logger';
 
-const outhService=new AuthService();   
+const authService = new AuthService();
 
-export  async function createUser(userData: 
-    { _id: string,name: string, email: string , password: string, role: string}): Promise<IUser> {
-    const newUser = new User(userData);
-    console.log("User created:", newUser); // בדקי מה מודפס בטרמינל של ה-VS Code
-    logger.info(`Creating new user with ID: ${userData._id}`);
-    const savedUser = await newUser.save();
-    
-    console.log("User saved to database:", savedUser); // בדקי מה מודפס בטרמינל של ה-VS Code
-    return savedUser;
-  }
-
-export  async function loginUser(_id: string, password: string): Promise<string> {
-    const user = await User.findOne({ _id }).exec();
-    if (!user) {
-        logger.warn(`Login attempt failed: User ${_id} not found`);
-        throw createError(404, "User not found");
-    }
-    if (user.password !== password) {
-        logger.warn(`Login attempt failed: Invalid password for user ${_id}`);
-        throw createError(402, "Invalid password");
-    }
-    return outhService.generateToken(user._id, user.role);
+export async function createUser(userData: Pick<IUser, '_id' | 'name' | 'email' | 'password' | 'role'>) {
+  // pick only the allowed fields instead of trusting the whole request body
+  const user = new User({
+    _id: userData._id,
+    name: userData.name,
+    email: userData.email,
+    password: userData.password,
+    role: userData.role
+  });
+  logger.info(`Creating new user with ID: ${userData._id}`);
+  return await user.save();
 }
 
+export async function loginUser(_id: string, password: string): Promise<string> {
+  const user = await User.findById(_id).exec();
+  const passwordMatches = user ? await bcrypt.compare(password, user.password) : false;
+
+  if (!user || !passwordMatches) {
+    // same message for both cases, so the API does not reveal which user IDs exist
+    logger.warn(`Login attempt failed for user ${_id}`);
+    throw createError(401, 'Invalid user ID or password');
+  }
+  return authService.generateToken(user._id, user.role);
+}

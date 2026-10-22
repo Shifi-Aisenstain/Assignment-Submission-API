@@ -1,7 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ffe112c1-078a-43e1-94ea-4e08dbf1b08f",
-		"name": "Shifi & Ayala - Assignment Management System",
+		"name": "Assignment Submission API",
 		"description": "קובץ Postman לבדיקת כל הפעולות במערכת ניהול המטלות",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "49578678",
@@ -35,9 +34,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "bearer"
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -103,7 +99,7 @@
 									"});",
 									"pm.test(\"Error message about password length\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.include('Password must be at least 8 characters');",
+									"    pm.expect(jsonData.error).to.include('Password must be at least 8 characters');",
 									"});"
 								],
 								"type": "text/javascript",
@@ -150,7 +146,7 @@
 									"});",
 									"pm.test(\"Error message about duplicate ID\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.include('User ID already exists');",
+									"    pm.expect(jsonData.error).to.include('User ID already exists');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -206,9 +202,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "bearer"
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -219,82 +212,6 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"userId\": \"teacher123\",\n  \"password\": \"password123\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/authentication/auth/login",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"authentication",
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login Teacher - Whithout token",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "שנבג",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"userId\": \"teacher123\",\r\n  \"password\": \"password123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/authentication/auth/login",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"authentication",
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "LoginTeacher - Whith Token",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "<JWT_FROM_LOGIN>",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"userId\": \"teacher123\",\r\n  \"password\": \"password123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
 						},
 						"url": {
 							"raw": "{{baseUrl}}/authentication/auth/login",
@@ -363,8 +280,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 402 - Invalid password\", function () {",
-									"    pm.response.to.have.status(402);",
+									"pm.test(\"Status code is 401 - Invalid password\", function () {",
+									"    pm.response.to.have.status(401);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -415,7 +332,7 @@
 									"pm.test(\"Assignment created with virtual field\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('title');",
-									"    pm.expect(jsonData).to.have.property('IsOpen');",
+									"    pm.expect(jsonData).to.have.property('isOpen');",
 									"    pm.collectionVariables.set('assignmentId', jsonData._id);",
 									"});"
 								],
@@ -437,7 +354,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"JavaScript Basics\",\n  \"description\": \"Create a simple calculator using JavaScript\",\n  \"dueDate\": \"2025-02-15T23:59:59.000Z\"\n}"
+							"raw": "{\n  \"title\": \"JavaScript Basics\",\n  \"description\": \"Create a simple calculator using JavaScript\",\n  \"dueDate\": \"2030-02-15T23:59:59.000Z\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/teacher/assignments",
@@ -459,8 +376,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 400 - Missing token\", function () {",
-									"    pm.response.to.have.status(400);",
+									"pm.test(\"Status code is 401 - Missing token\", function () {",
+									"    pm.response.to.have.status(401);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -495,16 +412,6 @@
 				{
 					"name": "Get All Submissions",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "<JWT_FROM_LOGIN>",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [
 							{
@@ -594,8 +501,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
 									"});",
 									"pm.test(\"Response is array of assignments\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -608,7 +515,12 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{studentToken}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/student/assignments",
 							"host": [
@@ -661,7 +573,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "<JWT_FROM_LOGIN>",
+									"value": "{{studentToken}}",
 									"type": "string"
 								}
 							]
@@ -699,7 +611,7 @@
 									"});",
 									"pm.test(\"Authorization error message\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.include('students not allow');",
+									"    pm.expect(jsonData.error).to.include('teachers only');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -753,16 +665,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "<JWT_FROM_LOGIN>",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [
 							{
@@ -885,7 +787,7 @@
 									"});",
 									"pm.test(\"Error message about password format\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.include('letter and one number');",
+									"    pm.expect(jsonData.error).to.include('letter and one number');",
 									"});"
 								],
 								"type": "text/javascript"

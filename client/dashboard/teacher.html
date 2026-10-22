@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Assignment Management</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-chalkboard-teacher"></i> Teacher Portal</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#create" class="nav-item active" data-section="create">
+                    <i class="fas fa-plus-circle"></i>
+                    New Assignment
+                </a>
+                <a href="#submissions" class="nav-item" data-section="submissions">
+                    <i class="fas fa-inbox"></i>
+                    Submissions
+                </a>
+                <a href="#stats" class="nav-item" data-section="stats">
+                    <i class="fas fa-chart-bar"></i>
+                    Averages
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1 id="pageTitle">New Assignment</h1>
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </header>
+
+            <!-- Create assignment -->
+            <section id="create-section" class="content-section active">
+                <div class="section-header">
+                    <h2>Create an Assignment</h2>
+                </div>
+                <form id="assignmentForm" class="submission-form">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="dueDate">Due date</label>
+                        <input type="datetime-local" id="dueDate" name="dueDate" required>
+                    </div>
+                    <div id="assignmentError" class="error-message"></div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus"></i>
+                        Create Assignment
+                    </button>
+                </form>
+            </section>
+
+            <!-- Submissions -->
+            <section id="submissions-section" class="content-section">
+                <div class="section-header">
+                    <h2>Student Submissions</h2>
+                    <button class="btn btn-primary" onclick="loadSubmissions()">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div id="submissionsList" class="cards-container">
+                    <div class="loading-spinner">Loading submissions...</div>
+                </div>
+            </section>
+
+            <!-- Averages -->
+            <section id="stats-section" class="content-section">
+                <div class="section-header">
+                    <h2>Average Grade per Assignment</h2>
+                    <button class="btn btn-primary" onclick="loadAverages()">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div class="grades-card">
+                    <div id="averagesList" class="grades-list">
+                        <div class="loading-spinner">Loading averages...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/teacher.js"></script>
+</body>
+</html>

@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "ts-node src/server.ts"
+    "dev": "ts-node src/server.ts",
+    "test": "vitest run"
   },
   "license": "MIT",
   "dependencies": {
@@ -24,7 +25,10 @@
     "@types/http-errors": "^2.0.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.5",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.3.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5"
   }
 }

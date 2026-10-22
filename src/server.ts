@@ -1,10 +1,12 @@
 import 'dotenv/config';
-import app from './app';
 import http from 'http';
+import app from './app';
+import { myDB } from './Utils/ConnectDB';
 
 const port = Number(process.env.PORT ?? 3000);
 
-const server = http.createServer(app);
-server.listen(port, () => {
-    console.log(`we up in port ${port}`);
+myDB.getDB();
+
+http.createServer(app).listen(port, () => {
+    console.log(`Server is listening on http://localhost:${port}`);
 });

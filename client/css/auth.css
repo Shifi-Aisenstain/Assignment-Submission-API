@@ -1,0 +1,13 @@
+/* Login and registration modals */
+.auth-container {
+    padding: 40px;
+}
+
+.auth-container h2 {
+    margin-bottom: 24px;
+    color: #2d3748;
+}
+
+.auth-container .error-message {
+    margin-top: 12px;
+}

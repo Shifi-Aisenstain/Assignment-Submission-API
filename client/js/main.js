@@ -1,5 +1,16 @@
 // Global Configuration
-const API_BASE_URL = 'http://localhost:3000';
+// The API and this client are served by the same server, so relative URLs are used.
+const API_BASE_URL = '';
+
+// Escape text before inserting it into HTML (prevents XSS from user-provided values)
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
 // Utility Functions
 function showModal(modalId) {
@@ -124,6 +135,12 @@ async function apiRequest(endpoint, options = {}) {
     try {
         const response = await fetch(url, finalOptions);
         const data = await response.json();
+        
+        if (response.status === 401 && token) {
+            // the stored token is invalid or expired
+            removeToken();
+            window.location.href = window.location.pathname.includes('dashboard/') ? '../index.html' : 'index.html';
+        }
         
         if (!response.ok) {
             throw new Error(data.error || `HTTP error! status: ${response.status}`);

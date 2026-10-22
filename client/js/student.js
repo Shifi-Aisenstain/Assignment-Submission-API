@@ -75,7 +75,7 @@ async function loadAssignments() {
     const select = document.getElementById('assignmentSelect');
     
     if (container) {
-        container.innerHTML = '<div class=\"loading-spinner\">Loading assignments...</div>';
+        container.innerHTML = '<div class="loading-spinner">Loading assignments...</div>';
     }
     
     try {
@@ -83,19 +83,19 @@ async function loadAssignments() {
         
         if (container) {
             if (assignments.length === 0) {
-                container.innerHTML = '<div class=\"no-data\">No open assignments available.</div>';
+                container.innerHTML = '<div class="no-data">No open assignments available.</div>';
             } else {
                 container.innerHTML = assignments.map(assignment => `
-                    <div class=\"assignment-card\">
-                        <h3>${assignment.title}</h3>
-                        <p>${assignment.description || 'No description provided.'}</p>
-                        <div class=\"assignment-meta\">
-                            <div class=\"due-date\">
-                                <i class=\"fas fa-calendar-alt\"></i>
+                    <div class="assignment-card">
+                        <h3>${escapeHtml(assignment.title)}</h3>
+                        <p>${escapeHtml(assignment.description || 'No description provided.')}</p>
+                        <div class="assignment-meta">
+                            <div class="due-date">
+                                <i class="fas fa-calendar-alt"></i>
                                 Due: ${new Date(assignment.dueDate).toLocaleDateString()}
                             </div>
-                            <span class=\"status-badge ${assignment.IsOpen ? 'status-open' : 'status-closed'}\">
-                                ${assignment.IsOpen ? 'Open' : 'Closed'}
+                            <span class="status-badge ${assignment.isOpen ? 'status-open' : 'status-closed'}">
+                                ${assignment.isOpen ? 'Open' : 'Closed'}
                             </span>
                         </div>
                     </div>
@@ -105,15 +105,15 @@ async function loadAssignments() {
         
         // Populate assignment select
         if (select) {
-            select.innerHTML = '<option value=\"\">Choose an assignment...</option>' +
+            select.innerHTML = '<option value="">Choose an assignment...</option>' +
                 assignments.map(assignment => 
-                    `<option value=\"${assignment._id}\">${assignment.title}</option>`
+                    `<option value="${escapeHtml(assignment._id)}">${escapeHtml(assignment.title)}</option>`
                 ).join('');
         }
         
     } catch (error) {
         if (container) {
-            container.innerHTML = `<div class=\"error-message\">Error loading assignments: ${error.message}</div>`;
+            container.innerHTML = `<div class="error-message">Error loading assignments: ${escapeHtml(error.message)}</div>`;
         }
         console.error('Error loading assignments:', error);
     }
@@ -124,10 +124,10 @@ async function loadGrades() {
     const classAveragesContainer = document.getElementById('classAverages');
     
     if (myGradesContainer) {
-        myGradesContainer.innerHTML = '<div class=\"loading-spinner\">Loading grades...</div>';
+        myGradesContainer.innerHTML = '<div class="loading-spinner">Loading grades...</div>';
     }
     if (classAveragesContainer) {
-        classAveragesContainer.innerHTML = '<div class=\"loading-spinner\">Loading averages...</div>';
+        classAveragesContainer.innerHTML = '<div class="loading-spinner">Loading averages...</div>';
     }
     
     try {
@@ -136,19 +136,20 @@ async function loadGrades() {
         // Display my grades
         if (myGradesContainer) {
             if (data['your grades'].length === 0) {
-                myGradesContainer.innerHTML = '<div class=\"no-data\">No submissions yet.</div>';
+                myGradesContainer.innerHTML = '<div class="no-data">No submissions yet.</div>';
             } else {
                 myGradesContainer.innerHTML = data['your grades'].map(submission => {
                     const gradeClass = getGradeClass(submission.grade);
-                    const gradeText = submission.grade ? submission.grade : 'Pending';
+                    const graded = submission.grade !== undefined && submission.grade !== null;
+                    const gradeText = graded ? submission.grade : 'Pending';
                     
                     return `
-                        <div class=\"grade-item\">
+                        <div class="grade-item">
                             <div>
-                                <div class=\"grade-title\">${submission.assignmentId ? submission.assignmentId.title : 'Unknown Assignment'}</div>
-                                ${submission.feedback ? `<small style=\"color: #666;\">${submission.feedback}</small>` : ''}
+                                <div class="grade-title">${escapeHtml(submission.assignmentId ? submission.assignmentId.title : 'Unknown Assignment')}</div>
+                                ${submission.feedback ? `<small style="color: #666;">${escapeHtml(submission.feedback)}</small>` : ''}
                             </div>
-                            <span class=\"grade-score ${gradeClass}\">${gradeText}</span>
+                            <span class="grade-score ${gradeClass}">${gradeText}</span>
                         </div>
                     `;
                 }).join('');
@@ -158,16 +159,16 @@ async function loadGrades() {
         // Display class averages
         if (classAveragesContainer) {
             if (data['class avg'].length === 0) {
-                classAveragesContainer.innerHTML = '<div class=\"no-data\">No class data available.</div>';
+                classAveragesContainer.innerHTML = '<div class="no-data">No class data available.</div>';
             } else {
                 classAveragesContainer.innerHTML = data['class avg'].map(avg => {
                     const avgClass = getGradeClass(avg.Average);
-                    const avgText = avg.Average ? Math.round(avg.Average) : 'N/A';
+                    const avgText = avg.Average !== null && avg.Average !== undefined ? Math.round(avg.Average) : 'N/A';
                     
                     return `
-                        <div class=\"grade-item\">
-                            <div class=\"grade-title\">${avg.assignmentTitle}</div>
-                            <span class=\"grade-score ${avgClass}\">${avgText}</span>
+                        <div class="grade-item">
+                            <div class="grade-title">${escapeHtml(avg.assignmentTitle)}</div>
+                            <span class="grade-score ${avgClass}">${avgText}</span>
                         </div>
                     `;
                 }).join('');
@@ -176,17 +177,17 @@ async function loadGrades() {
         
     } catch (error) {
         if (myGradesContainer) {
-            myGradesContainer.innerHTML = `<div class=\"error-message\">Error loading grades: ${error.message}</div>`;
+            myGradesContainer.innerHTML = `<div class="error-message">Error loading grades: ${escapeHtml(error.message)}</div>`;
         }
         if (classAveragesContainer) {
-            classAveragesContainer.innerHTML = `<div class=\"error-message\">Error loading averages: ${error.message}</div>`;
+            classAveragesContainer.innerHTML = `<div class="error-message">Error loading averages: ${escapeHtml(error.message)}</div>`;
         }
         console.error('Error loading grades:', error);
     }
 }
 
 function getGradeClass(grade) {
-    if (!grade) return 'grade-pending';
+    if (grade === undefined || grade === null) return 'grade-pending';
     if (grade >= 90) return 'grade-excellent';
     if (grade >= 80) return 'grade-good';
     if (grade >= 70) return 'grade-average';
@@ -203,11 +204,11 @@ async function handleSubmission(event) {
         partner: formData.get('partner') || undefined
     };
     
-    const submitButton = event.target.querySelector('button[type=\"submit\"]');
+    const submitButton = event.target.querySelector('button[type="submit"]');
     const originalText = submitButton.innerHTML;
     
     try {
-        submitButton.innerHTML = '<div class=\"loading\"></div> Submitting...';
+        submitButton.innerHTML = '<div class="loading"></div> Submitting...';
         submitButton.disabled = true;
         
         await apiRequest('/student/submissions', {
