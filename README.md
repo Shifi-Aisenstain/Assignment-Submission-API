@@ -50,6 +50,8 @@ npm run dev              # or: npm run build && npm start
 
 Open `http://localhost:3000` for the web client. The API is served from the same address.
 
+To try it with sample data (a teacher, two students, a few assignments and one graded submission) run `npm run seed`. The demo accounts and their password are listed at the top of [`src/seed.ts`](src/seed.ts).
+
 | Variable | Description | Default |
 |---|---|---|
 | `JWT_SECRET` | Secret used to sign tokens (**required**) | none |
